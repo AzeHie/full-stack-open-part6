@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addVote } from '../reducers/anecdoteReducer';
+import { newVote } from '../reducers/anecdoteReducer';
 import { hideNotification, showNotification } from '../reducers/notificationReducer';
 
 const AnecdoteList = () => {
@@ -16,7 +16,7 @@ const AnecdoteList = () => {
   });
 
   const handleNewVote = (anecdote) => {
-    dispatch(addVote(anecdote.id));
+    dispatch(newVote(anecdote.id));
     dispatch(showNotification(`You voted ${anecdote.content}`));
     setTimeout(() => {
       dispatch(hideNotification());
