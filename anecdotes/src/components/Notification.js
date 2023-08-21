@@ -8,7 +8,6 @@ const Notification = () => {
     borderWidth: 1,
     display: isVisible ? 'block' : 'none'
   };
-  console.log('Notification loaded ', message);
 
   return <div style={style}>{message}</div>;
 };
