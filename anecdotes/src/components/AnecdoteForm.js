@@ -1,10 +1,7 @@
 import { Fragment } from 'react';
 import { useDispatch } from 'react-redux';
 import { createAnecdote } from '../reducers/anecdoteReducer';
-import {
-  showNotification,
-  hideNotification,
-} from '../reducers/notificationReducer';
+import { setNotification } from '../reducers/notificationReducer';
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch();
@@ -16,13 +13,10 @@ const AnecdoteForm = () => {
     event.target.anecdote.value = '';
     const anecdote = {
       content: content,
-      votes: 0
+      votes: 0,
     };
     dispatch(createAnecdote(anecdote));
-    dispatch(showNotification(`New anecdote added: ${content}` ));
-    setTimeout(() => {
-      dispatch(hideNotification());
-    }, 5000);
+    dispatch(setNotification(`New anecdote added: ${content}`, 5));
   };
 
   return (
