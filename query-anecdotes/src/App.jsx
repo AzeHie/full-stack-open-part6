@@ -3,7 +3,7 @@ import axios from 'axios';
 
 import AnecdoteForm from './components/AnecdoteForm';
 import Notification from './components/Notification';
-import { createAnecdote, getAnecdotes } from './requests';
+import { createAnecdote, getAnecdotes, updateAnecdote } from './requests';
 
 const App = () => {
   const queryClient = useQueryClient();
@@ -14,8 +14,14 @@ const App = () => {
     },
   });
 
+  const updateAnecdoteMutation = useMutation(updateAnecdote, {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['anecdotes'] });
+    },
+  });
+
   const handleVote = (anecdote) => {
-    console.log('vote');
+    updateAnecdoteMutation.mutate({...anecdote, votes: anecdote.votes + 1});
   };
 
   const handleAddAnecdote = (content) => {
@@ -51,7 +57,7 @@ const App = () => {
         <div key={anecdote.id}>
           <div>{anecdote.content}</div>
           <div>
-            has {anecdote.votes}
+            has {anecdote.votes} votes
             <button onClick={() => handleVote(anecdote)}>vote</button>
           </div>
         </div>
