@@ -4,24 +4,52 @@ import axios from 'axios';
 import AnecdoteForm from './components/AnecdoteForm';
 import Notification from './components/Notification';
 import { createAnecdote, getAnecdotes, updateAnecdote } from './requests';
+import { useNotificationDispatch } from './NotificationContext';
 
 const App = () => {
   const queryClient = useQueryClient();
+  const notificationDispatch = useNotificationDispatch();
 
   const newAnecdoteMutation = useMutation(createAnecdote, {
     onSuccess: () => {
+      notificationDispatch({ type: 'SHOW', payload: 'New anecdote added' });
+      setTimeout(() => {
+        notificationDispatch({ type: 'HIDE' });
+      }, 5000);
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] });
+    },
+    onError: () => {
+      notificationDispatch({
+        type: 'SHOW',
+        payload: 'Too short anecdote, has to be atleast 5 characters',
+      });
+      setTimeout(() => {
+        notificationDispatch({ type: 'HIDE' });
+      }, 5000);
     },
   });
 
   const updateAnecdoteMutation = useMutation(updateAnecdote, {
-    onSuccess: () => {
+    onSuccess: (context) => {
+      const anecdote = context.content;
+
+      notificationDispatch({
+        type: 'SHOW',
+        payload: `You voted ${anecdote}`,
+      });
+      setTimeout(() => {
+        notificationDispatch({ type: 'HIDE' });
+      }, 5000);
+
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] });
     },
   });
 
   const handleVote = (anecdote) => {
-    updateAnecdoteMutation.mutate({...anecdote, votes: anecdote.votes + 1});
+    updateAnecdoteMutation.mutate(
+      { ...anecdote, votes: anecdote.votes + 1 },
+      { context: { anecdote } }
+    );
   };
 
   const handleAddAnecdote = (content) => {
